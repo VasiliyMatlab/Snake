@@ -51,8 +51,8 @@ if __name__ == "__main__":
 
     snake_blocks = [SnakeBlock(9,9)]
     apple = get_random_empty_block()
-    drow = 0
-    dcol = 1
+    drow = bufrow = 0
+    dcol = bufcol = 1
     score = 0
     speed = 1
 
@@ -63,17 +63,17 @@ if __name__ == "__main__":
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP and drow != 1:
-                    drow = -1
-                    dcol = 0
+                    bufrow = -1
+                    bufcol = 0
                 elif event.key == pygame.K_DOWN and drow != -1:
-                    drow = 1
-                    dcol = 0
+                    bufrow = 1
+                    bufcol = 0
                 elif event.key == pygame.K_LEFT and dcol != 1:
-                    drow = 0
-                    dcol = -1
+                    bufrow = 0
+                    bufcol = -1
                 elif event.key == pygame.K_RIGHT and dcol != -1:
-                    drow = 0
-                    dcol = 1
+                    bufrow = 0
+                    bufcol = 1
         
         screen.fill(FRAME_COLOR)
         pygame.draw.rect(screen, HEADER_COLOR, [0,0, SIZE[0],HEADER_MARGIN])
@@ -107,10 +107,17 @@ if __name__ == "__main__":
         for block in snake_blocks:
             draw_block(SNAKE_COLOR, block.x, block.y)
 
+        drow = bufrow
+        dcol = bufcol
         new_head = SnakeBlock(head.x+drow, head.y+dcol)
+        pygame.display.flip()
+
+        if new_head in snake_blocks:
+            pygame.quit()
+            sys.exit()
+
         snake_blocks.append(new_head)
         if not is_eat:
             snake_blocks.pop(0)
 
-        pygame.display.flip()
-        timer.tick(2+speed)
+        timer.tick(1+speed)
