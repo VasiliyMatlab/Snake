@@ -43,14 +43,18 @@ class SnakeBlock:
 
 
 if __name__ == "__main__":
+    pygame.init()
     screen = pygame.display.set_mode(SIZE)
     pygame.display.set_caption("Snake")
     timer = pygame.time.Clock()
+    courier = pygame.font.SysFont("courier", 36)
 
     snake_blocks = [SnakeBlock(9,9)]
     apple = get_random_empty_block()
     drow = 0
     dcol = 1
+    score = 0
+    speed = 1
 
     while True:
         for event in pygame.event.get():
@@ -70,8 +74,14 @@ if __name__ == "__main__":
                 elif event.key == pygame.K_RIGHT and dcol != -1:
                     drow = 0
                     dcol = 1
+        
         screen.fill(FRAME_COLOR)
         pygame.draw.rect(screen, HEADER_COLOR, [0,0, SIZE[0],HEADER_MARGIN])
+
+        text_score = courier.render(f"Score: {score}", 0, WHITE)
+        text_speed = courier.render(f"Speed: {speed}", 0, WHITE)
+        screen.blit(text_score, (SIZE_BLOCK, SIZE_BLOCK))
+        screen.blit(text_speed, (SIZE_BLOCK + 250, SIZE_BLOCK))
 
         for row in range(COUNT_BLOCKS):
             for column in range(COUNT_BLOCKS):
@@ -87,7 +97,11 @@ if __name__ == "__main__":
             sys.exit()
         
         draw_block(RED, apple.x, apple.y)
+        is_eat = False
         if apple == head:
+            score += 1
+            speed = score // 5 + 1
+            is_eat = True
             apple = get_random_empty_block()
 
         for block in snake_blocks:
@@ -95,7 +109,8 @@ if __name__ == "__main__":
 
         new_head = SnakeBlock(head.x+drow, head.y+dcol)
         snake_blocks.append(new_head)
-        snake_blocks.pop(0)
+        if not is_eat:
+            snake_blocks.pop(0)
 
         pygame.display.flip()
-        timer.tick(3)
+        timer.tick(2+speed)
