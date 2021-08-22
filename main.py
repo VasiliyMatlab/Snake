@@ -27,12 +27,30 @@ class SnakeBlock:
 if __name__ == "__main__":
     screen = pygame.display.set_mode(SIZE)
     pygame.display.set_caption("Snake")
+    timer = pygame.time.Clock()
+
+    snake_block = [SnakeBlock(9,9)]
+    drow = 0
+    dcol = 1
 
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP and drow != 1:
+                    drow = -1
+                    dcol = 0
+                elif event.key == pygame.K_DOWN and drow != -1:
+                    drow = 1
+                    dcol = 0
+                elif event.key == pygame.K_LEFT and dcol != 1:
+                    drow = 0
+                    dcol = -1
+                elif event.key == pygame.K_RIGHT and dcol != -1:
+                    drow = 0
+                    dcol = 1
         screen.fill(FRAME_COLOR)
         pygame.draw.rect(screen, HEADER_COLOR, [0,0, SIZE[0],HEADER_MARGIN])
 
@@ -44,8 +62,10 @@ if __name__ == "__main__":
                     color = WHITE
                 draw_block(color, row, column)
 
-        snake_block = [SnakeBlock(9,9)]
         for block in snake_block:
             draw_block(SNAKE_COLOR, block.x, block.y)
+            block.x += drow
+            block.y += dcol
 
         pygame.display.flip()
+        timer.tick(3)
