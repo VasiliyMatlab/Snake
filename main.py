@@ -1,4 +1,5 @@
 import pygame
+import sys
 
 
 SIZE_BLOCK = 20
@@ -22,6 +23,9 @@ class SnakeBlock:
     def __init__(self, x, y) -> None:
         self.x = x
         self.y = y
+    
+    def is_inside(self):
+        return 0<=self.x<COUNT_BLOCKS and 0<=self.y<COUNT_BLOCKS
 
 
 if __name__ == "__main__":
@@ -29,7 +33,7 @@ if __name__ == "__main__":
     pygame.display.set_caption("Snake")
     timer = pygame.time.Clock()
 
-    snake_block = [SnakeBlock(9,9)]
+    snake_blocks = [SnakeBlock(9,9)]
     drow = 0
     dcol = 1
 
@@ -37,7 +41,7 @@ if __name__ == "__main__":
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                exit()
+                sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP and drow != 1:
                     drow = -1
@@ -62,10 +66,16 @@ if __name__ == "__main__":
                     color = WHITE
                 draw_block(color, row, column)
 
-        for block in snake_block:
+        head = snake_blocks[-1]
+        if not head.is_inside():
+            pygame.quit()
+            sys.exit()
+        for block in snake_blocks:
             draw_block(SNAKE_COLOR, block.x, block.y)
-            block.x += drow
-            block.y += dcol
+        
+        new_head = SnakeBlock(head.x+drow, head.y+dcol)
+        snake_blocks.append(new_head)
+        snake_blocks.pop(0)
 
         pygame.display.flip()
         timer.tick(3)
