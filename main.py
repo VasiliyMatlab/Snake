@@ -1,13 +1,15 @@
 import pygame
 import sys
 import random
+from time import sleep
 
 
 SIZE_BLOCK = 20
 COUNT_BLOCKS = 20
 MARGIN = 1
 HEADER_MARGIN = 70
-SIZE = [SIZE_BLOCK*(COUNT_BLOCKS+2) + MARGIN*COUNT_BLOCKS, SIZE_BLOCK*(COUNT_BLOCKS+2) + MARGIN*COUNT_BLOCKS + HEADER_MARGIN]
+SIZE = [SIZE_BLOCK*(COUNT_BLOCKS+2) + MARGIN*COUNT_BLOCKS, 
+        SIZE_BLOCK*(COUNT_BLOCKS+2) + MARGIN*COUNT_BLOCKS + HEADER_MARGIN]
 
 SNAKE_COLOR = (0, 102, 0)
 FRAME_COLOR = (0, 255, 204)
@@ -17,9 +19,15 @@ BLUE = (204, 255, 255)
 RED = (224, 0, 0)
 
 
+# Отрисовка блока (квадрата на экране)
 def draw_block(color: tuple, row: int, column: int) -> None:
-    pygame.draw.rect(screen, color, [SIZE_BLOCK+column*SIZE_BLOCK+MARGIN*(column+1),HEADER_MARGIN+SIZE_BLOCK+row*SIZE_BLOCK+MARGIN*(row+1), SIZE_BLOCK,SIZE_BLOCK])
+    pygame.draw.rect(screen, color, 
+        [SIZE_BLOCK+column*SIZE_BLOCK+MARGIN*(column+1),
+         HEADER_MARGIN+SIZE_BLOCK+row*SIZE_BLOCK+MARGIN*(row+1), 
+         SIZE_BLOCK,
+         SIZE_BLOCK])
 
+# Получение рандомного блока, исключая те, что принадлежат змее
 def get_random_empty_block():
     x = random.randint(0, COUNT_BLOCKS-1)
     y = random.randint(0, COUNT_BLOCKS-1)
@@ -39,7 +47,8 @@ class SnakeBlock:
         return 0<=self.x<COUNT_BLOCKS and 0<=self.y<COUNT_BLOCKS
     
     def __eq__(self, other) -> bool:
-        return isinstance(other, SnakeBlock) and self.x == other.x and self.y == other.y
+        return isinstance(other, SnakeBlock) and \
+               self.x == other.x and self.y == other.y
 
 
 if __name__ == "__main__":
@@ -59,6 +68,7 @@ if __name__ == "__main__":
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                sleep(3)
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
@@ -93,6 +103,7 @@ if __name__ == "__main__":
 
         head = snake_blocks[-1]
         if not head.is_inside():
+            sleep(3)
             pygame.quit()
             sys.exit()
         
@@ -113,6 +124,7 @@ if __name__ == "__main__":
         pygame.display.flip()
 
         if new_head in snake_blocks:
+            sleep(3)
             pygame.quit()
             sys.exit()
 
@@ -120,4 +132,4 @@ if __name__ == "__main__":
         if not is_eat:
             snake_blocks.pop(0)
 
-        timer.tick(1+speed)
+        timer.tick(2+speed)
